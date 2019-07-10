@@ -53,10 +53,10 @@ contract EventTickets {
         Set the owner to the creator of the contract.
         Set the appropriate myEvent details.
     */
-    constructor(string memory description, string memory website, uint totalTickets) payable public {
+    constructor(string memory description, string memory URL, uint totalTickets) payable public {
       owner = msg.sender;
       myEvent.description = description;
-      myEvent.website = website;
+      myEvent.website = URL;
       myEvent.totalTickets = totalTickets;
       myEvent.sales = 0;
       myEvent.isOpen = true;
