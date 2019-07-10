@@ -166,7 +166,7 @@ contract EventTicketsV2 {
     */
     function endSale(uint eventId) payable public isOwner(msg.sender)
     {
-      events[eventId].isOpen == false;
+      events[eventId].isOpen = false;
 
       uint eventFunds = (events[eventId].sales * PRICE_TICKET);
 
