@@ -104,7 +104,7 @@ contract EventTickets {
       payable public
     {
         require(myEvent.isOpen == true);
-        require(myEvent.totalTickets - (myEvent.sales + ticketsToBuy) >= 0);
+        require(myEvent.totalTickets >= (myEvent.sales + ticketsToBuy));
         require(msg.value >= ticketsToBuy*TICKET_PRICE);
 
 
