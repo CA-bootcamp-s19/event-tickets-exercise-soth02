@@ -13,7 +13,7 @@ contract EventTickets {
      */
     address payable public owner;
 
-    uint   TICKET_PRICE = 100 wei;
+    uint TICKET_PRICE = 100 wei;
 
     /*
         Create a struct called "Event".
@@ -53,7 +53,7 @@ contract EventTickets {
         Set the owner to the creator of the contract.
         Set the appropriate myEvent details.
     */
-    constructor(string memory description, string memory website, uint totalTickets) public {
+    constructor(string memory description, string memory website, uint totalTickets) payable public {
       owner = msg.sender;
       myEvent.description = description;
       myEvent.website = website;
@@ -104,11 +104,16 @@ contract EventTickets {
       payable public
     {
         require(myEvent.isOpen == true);
+        require(myEvent.totalTickets - (myEvent.sales + ticketsToBuy) >= 0);
         require(msg.value >= ticketsToBuy*TICKET_PRICE);
-        require(myEvent.totalTickets - ticketsToBuy >= 0);
+
+
 
         myEvent.buyers[msg.sender] += ticketsToBuy;
-        myEvent.totalTickets -= ticketsToBuy;
+        myEvent.sales += ticketsToBuy;
+
+        msg.sender.transfer(msg.value-(ticketsToBuy*TICKET_PRICE));
+
         emit LogBuyTickets(msg.sender, ticketsToBuy);
     }
 
@@ -121,7 +126,20 @@ contract EventTickets {
             - Transfer the appropriate amount to the refund requester.
             - Emit the appropriate event.
     */
+    function getRefund()
+      payable public
+    {
+      require(myEvent.buyers[msg.sender] > 0);
 
+      uint numberToRefund = myEvent.buyers[msg.sender];
+      myEvent.buyers[msg.sender] = 0;
+
+      myEvent.sales -= numberToRefund;
+
+      msg.sender.transfer(numberToRefund*TICKET_PRICE);
+
+      emit LogGetRefund(msg.sender, numberToRefund);
+    }
     /*
         Define a function called endSale().
         This function will close the ticket sales.
@@ -131,4 +149,14 @@ contract EventTickets {
             - transfer the contract balance to the owner
             - emit the appropriate event
     */
+    function endSale() isOwner(msg.sender)
+      payable public
+    {
+      myEvent.isOpen == false;
+
+      uint totalFunds = address(this).balance;
+      owner.transfer(totalFunds);
+
+      emit LogEndSale(msg.sender, totalFunds);
+    }
 }
