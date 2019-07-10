@@ -152,7 +152,7 @@ contract EventTickets {
     function endSale() isOwner(msg.sender)
       payable public
     {
-      myEvent.isOpen == false;
+      myEvent.isOpen = false;
 
       uint totalFunds = address(this).balance;
       owner.transfer(totalFunds);
