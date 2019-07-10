@@ -8,7 +8,7 @@ contract EventTicketsV2 {
     /*
         Define an public owner variable. Set it to the creator of the contract when it is initialized.
     */
-    address payable public owner;
+    address payable public owner = msg.sender;
 
     uint   PRICE_TICKET = 100 wei;
 
@@ -59,11 +59,6 @@ contract EventTicketsV2 {
             - emit the appropriate event
             - return the event's ID
     */
-
-    constructor() public
-    {
-      owner = msg.sender;
-    }
 
     function addEvent(string memory description, string memory URL, uint totalTickets ) public isOwner(msg.sender)
     {
