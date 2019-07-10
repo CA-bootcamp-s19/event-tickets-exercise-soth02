@@ -8,7 +8,7 @@ contract EventTicketsV2 {
     /*
         Define an public owner variable. Set it to the creator of the contract when it is initialized.
     */
-    address payable public owner;
+    address payable public owner = msg.sender;
 
     uint   PRICE_TICKET = 100 wei;
 
@@ -126,13 +126,29 @@ contract EventTicketsV2 {
             - send appropriate value to the refund requester
             - emit the appropriate event
     */
+    function getRefund(uint eventId) payable public
+    {
 
+      uint numTickets = events[eventId].buyers[msg.sender];
+      require(numTickets > 0);
+
+      events[eventId].buyers[msg.sender] = 0;
+      events[eventId].sales += numTickets;
+
+      msg.sender.transfer(numTickets * PRICE_TICKET);
+
+      emit LogGetRefund(msg.sender, eventId, numTickets);
+    }
     /*
         Define a function called getBuyerNumberTickets()
         This function takes one parameter, an event ID
         This function returns a uint, the number of tickets that the msg.sender has purchased.
     */
-
+    function getBuyerNumberTickets(uint eventId) view public
+      returns(uint numTickets)
+    {
+      return(events[eventId].buyers[msg.sender]);
+    }
     /*
         Define a function called endSale()
         This function takes one parameter, the event ID
@@ -142,4 +158,16 @@ contract EventTicketsV2 {
             - transfer the balance from those event sales to the contract owner
             - emit the appropriate event
     */
+    function endSale(uint eventId) isOwner(msg.sender) payable public
+    {
+      events[eventId].isOpen == false;
+
+      uint eventFunds = (events[eventId].sales * PRICE_TICKET);
+
+      owner.transfer(eventFunds);
+
+      uint eventsBalance = address(this).balance - eventFunds;
+
+      emit LogEndSale(msg.sender, eventsBalance, eventId);
+    }
 }
