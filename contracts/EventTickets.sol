@@ -82,7 +82,7 @@ contract EventTickets {
       public
       returns(uint ticketsPurchased)
     {
-      return myEvent.buyers[_address];
+      return (myEvent.buyers[_address]);
     }
 
     /*
