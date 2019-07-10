@@ -167,8 +167,6 @@ contract EventTicketsV2 {
 
       owner.transfer(eventFunds);
 
-      uint eventsBalance = address(this).balance - eventFunds;
-
-      emit LogEndSale(msg.sender, eventsBalance, eventId);
+      emit LogEndSale(msg.sender, eventFunds, eventId);
     }
 }
